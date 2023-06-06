@@ -1,7 +1,7 @@
 package com.adamlewandowski.githubrepositorychecker.controller;
 
 import com.adamlewandowski.githubrepositorychecker.controller.dto.RepositoryInformationDto;
-import com.adamlewandowski.githubrepositorychecker.service.RepositoriesService;
+import com.adamlewandowski.githubrepositorychecker.service.GithubRepositoriesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +14,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RepositoriesRestController {
 
-    private final RepositoriesService repositoriesService;
+    private final GithubRepositoriesService githubRepositoriesService;
 
     @GetMapping
     public List<RepositoryInformationDto> getAll(){
-        return repositoriesService.getAllOwnerRepositories("adamlewandowski95");
+        return githubRepositoriesService.getAllOwnerRepositories("adamlewandowski95");
     }
 
 }
