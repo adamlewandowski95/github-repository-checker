@@ -1,13 +1,10 @@
 package com.adamlewandowski.githubrepositorychecker.service;
 
-import com.adamlewandowski.githubrepositorychecker.controller.dto.BranchInformationDto;
 import com.adamlewandowski.githubrepositorychecker.controller.dto.RepositoryInformationDto;
 import com.adamlewandowski.githubrepositorychecker.exception.NoSuchUserException;
 import com.adamlewandowski.githubrepositorychecker.exception.UnexpectedStatusCodeException;
-import com.adamlewandowski.githubrepositorychecker.pojo.BranchPojo;
 import com.adamlewandowski.githubrepositorychecker.pojo.RepositoryPojo;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -16,10 +13,12 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Service
-@NoArgsConstructor
+@AllArgsConstructor
 public class GithubRepositoriesService {
 
-    @Autowired
+
+    private GithubBranchesService githubBranchesService;
+
     private WebClient.Builder webClientBuilder;
 
     public List<RepositoryInformationDto> getAllOwnerRepositories(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
@@ -43,28 +42,7 @@ public class GithubRepositoriesService {
 
     private List<RepositoryInformationDto> prepareRepositoryInformationDto(List<RepositoryPojo> repositoryPojo) {
         return repositoryPojo.stream()
-                .map(repo -> new RepositoryInformationDto(repo.getName(), repo.getOwner().getLogin(), getBranchesForRepository(repo)))
-                .toList();
-    }
-
-    private List<BranchInformationDto> getBranchesForRepository(RepositoryPojo repositoryPojo) {
-        List<BranchPojo> branchesForRepositoryFromGithub = getBranchesForRepositoryFromGithub(repositoryPojo.getOwner().getLogin(), repositoryPojo.getName());
-        return prepareBranchInformationDto(branchesForRepositoryFromGithub);
-    }
-
-    private List<BranchPojo> getBranchesForRepositoryFromGithub(String owner, String repositoryName) {
-        return webClientBuilder.build()
-                .get()
-                .uri(String.format("/repos/%s/%s/branches", owner, repositoryName))
-                .retrieve()
-                .bodyToFlux(BranchPojo.class)
-                .collectList()
-                .block();
-    }
-
-    private List<BranchInformationDto> prepareBranchInformationDto(List<BranchPojo> branchesForRepositoryFromGithub) {
-        return branchesForRepositoryFromGithub.stream()
-                .map(branch -> new BranchInformationDto(branch.getName(), branch.getCommit().getSha()))
+                .map(repo -> new RepositoryInformationDto(repo.getName(), repo.getOwner().getLogin(), githubBranchesService.getBranchesForRepository(repo)))
                 .toList();
     }
 }
