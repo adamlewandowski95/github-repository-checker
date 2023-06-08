@@ -31,9 +31,9 @@ class GithubRepositoriesServiceTest {
     @Test
     void getAllOwnerRepositories_ownerExistInGithub_returnsListOfRepositories() {
         //given
-        when(githubRepositoriesClient.getRepositoriesInformation(OWNER)).thenReturn(REPOSITORY_DTO_LIST);
-        when(githubBranchesService.getBranchesForRepository(FIRST_REPOSITORY_DTO)).thenReturn(BRANCH_INFORMATION_DTO_LIST);
-        when(githubBranchesService.getBranchesForRepository(SECOND_REPOSITORY_DTO)).thenReturn(BRANCH_INFORMATION_DTO_LIST);
+        when(githubRepositoriesClient.getRepositoriesDto(OWNER)).thenReturn(REPOSITORY_DTO_LIST);
+        when(githubBranchesService.getAllOwnerBranchesForRepository(FIRST_REPOSITORY_DTO)).thenReturn(BRANCH_INFORMATION_DTO_LIST);
+        when(githubBranchesService.getAllOwnerBranchesForRepository(SECOND_REPOSITORY_DTO)).thenReturn(BRANCH_INFORMATION_DTO_LIST);
         //when
         List<RepositoryInformationDto> allOwnerRepositories = githubRepositoriesService.getAllOwnerRepositories(OWNER);
         //then
@@ -43,10 +43,10 @@ class GithubRepositoriesServiceTest {
     @Test
     void getAllOwnerRepositories_ownerNotExistInGithub_throwsNoSuchUserException() {
         //given
-        when(githubRepositoriesClient.getRepositoriesInformation(OWNER)).thenThrow(new NoSuchUserException("There is no such user in Github"));
+        when(githubRepositoriesClient.getRepositoriesDto(OWNER)).thenThrow(new NoSuchUserException("There is no such user in Github"));
         //when
         //then
-        assertThatThrownBy(() -> githubRepositoriesClient.getRepositoriesInformation(OWNER))
+        assertThatThrownBy(() -> githubRepositoriesClient.getRepositoriesDto(OWNER))
                 .isInstanceOf(NoSuchUserException.class)
                         .hasMessage("There is no such user in Github");
     }
@@ -54,10 +54,10 @@ class GithubRepositoriesServiceTest {
     @Test
     void getAllOwnerRepositories_ownerNotExistInGithub_throwsUnexpectedStatusCodeException() {
         //given
-        when(githubRepositoriesClient.getRepositoriesInformation(OWNER)).thenThrow(new UnexpectedStatusCodeException("Unexpected error from API"));
+        when(githubRepositoriesClient.getRepositoriesDto(OWNER)).thenThrow(new UnexpectedStatusCodeException("Unexpected error from API"));
         //when
         //then
-        assertThatThrownBy(() -> githubRepositoriesClient.getRepositoriesInformation(OWNER))
+        assertThatThrownBy(() -> githubRepositoriesClient.getRepositoriesDto(OWNER))
                 .isInstanceOf(UnexpectedStatusCodeException.class)
                 .hasMessage("Unexpected error from API");
     }

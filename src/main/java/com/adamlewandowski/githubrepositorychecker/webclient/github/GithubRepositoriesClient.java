@@ -17,7 +17,7 @@ public class GithubRepositoriesClient {
 
     private final WebClient.Builder webClientBuilder;
 
-    public List<RepositoryDto> getRepositoriesInformation(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
+    public List<RepositoryDto> getRepositoriesDto(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
         return webClientBuilder.build()
                 .get()
                 .uri(String.format("/users/%s/repos?type=owner", owner))

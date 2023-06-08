@@ -18,13 +18,13 @@ public class GithubRepositoriesService {
     private final GithubRepositoriesClient githubRepositoriesClient;
 
     public List<RepositoryInformationDto> getAllOwnerRepositories(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
-        List<RepositoryDto> repositoryDtoList = githubRepositoriesClient.getRepositoriesInformation(owner);
+        List<RepositoryDto> repositoryDtoList = githubRepositoriesClient.getRepositoriesDto(owner);
         return prepareRepositoryInformationDto(repositoryDtoList);
     }
 
     private List<RepositoryInformationDto> prepareRepositoryInformationDto(List<RepositoryDto> repositoryDtoList) {
         return repositoryDtoList.stream()
-                .map(repo -> new RepositoryInformationDto(repo.getName(), repo.getOwnerDto().getLogin(), githubBranchesService.getBranchesForRepository(repo)))
+                .map(repo -> new RepositoryInformationDto(repo.getName(), repo.getOwnerDto().getLogin(), githubBranchesService.getAllOwnerBranchesForRepository(repo)))
                 .toList();
     }
 }

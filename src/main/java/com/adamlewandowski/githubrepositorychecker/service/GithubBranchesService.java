@@ -15,7 +15,7 @@ public class GithubBranchesService {
 
     private final GithubBranchesClient githubBranchesClient;
 
-    List<BranchInformationDto> getBranchesForRepository(RepositoryDto repositoryDto) {
+    List<BranchInformationDto> getAllOwnerBranchesForRepository(RepositoryDto repositoryDto) {
         List<BranchDto> branchesForRepositoryFromGithub = githubBranchesClient.getBranchesForRepository(repositoryDto.getOwnerDto().getLogin(), repositoryDto.getName());
         return prepareBranchInformationDto(branchesForRepositoryFromGithub);
     }
