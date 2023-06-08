@@ -2,7 +2,7 @@ package com.adamlewandowski.githubrepositorychecker.webclient.github;
 
 import com.adamlewandowski.githubrepositorychecker.exception.NoSuchUserException;
 import com.adamlewandowski.githubrepositorychecker.exception.UnexpectedStatusCodeException;
-import com.adamlewandowski.githubrepositorychecker.pojo.RepositoryPojo;
+import com.adamlewandowski.githubrepositorychecker.webclient.github.dto.RepositoryDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -17,12 +17,12 @@ public class GithubRepositoriesClient {
 
     private final WebClient.Builder webClientBuilder;
 
-    public List<RepositoryPojo> getRepositoriesInformation(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
+    public List<RepositoryDto> getRepositoriesInformation(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
         return webClientBuilder.build()
                 .get()
                 .uri(String.format("/users/%s/repos?type=owner", owner))
                 .retrieve()
-                .bodyToFlux(RepositoryPojo.class)
+                .bodyToFlux(RepositoryDto.class)
                 .onErrorResume(WebClientResponseException.class,
                         ex -> ex.getStatusCode().value() == 404 ?
                                 Mono.error(new NoSuchUserException("There is no such user in Github")) :
