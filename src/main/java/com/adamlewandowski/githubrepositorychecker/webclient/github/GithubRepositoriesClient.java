@@ -17,7 +17,7 @@ public class GithubRepositoriesClient {
 
     private final WebClient.Builder webClientBuilder;
 
-    public List<RepositoryDto> getRepositoriesDto(String owner) throws NoSuchUserException, UnexpectedStatusCodeException {
+    public Mono<List<RepositoryDto>> getRepositoriesDto(String owner) {
         return webClientBuilder.build()
                 .get()
                 .uri(String.format("/users/%s/repos?type=owner", owner))
@@ -27,7 +27,6 @@ public class GithubRepositoriesClient {
                         ex -> ex.getStatusCode().value() == 404 ?
                                 Mono.error(new NoSuchUserException("There is no such user in Github")) :
                                 Mono.error(new UnexpectedStatusCodeException("Unexpected error from API")))
-                .collectList()
-                .block();
+                .collectList();
     }
 }

@@ -20,6 +20,6 @@ public class RepositoriesRestController {
 
     @GetMapping(value = "/{username}", produces = "application/json")
     public ResponseEntity<List<RepositoryInformationDto>> getRepositoriesList(@PathVariable("username") String username) {
-        return ResponseEntity.ok(githubRepositoriesService.getAllOwnerRepositories(username));
+        return ResponseEntity.ok(githubRepositoriesService.getAllOwnerRepositories(username).block());
     }
 }

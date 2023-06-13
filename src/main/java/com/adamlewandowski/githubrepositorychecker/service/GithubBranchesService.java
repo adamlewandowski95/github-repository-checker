@@ -1,11 +1,12 @@
 package com.adamlewandowski.githubrepositorychecker.service;
 
 import com.adamlewandowski.githubrepositorychecker.controller.dto.BranchInformationDto;
+import com.adamlewandowski.githubrepositorychecker.webclient.github.GithubBranchesClient;
 import com.adamlewandowski.githubrepositorychecker.webclient.github.dto.BranchDto;
 import com.adamlewandowski.githubrepositorychecker.webclient.github.dto.RepositoryDto;
-import com.adamlewandowski.githubrepositorychecker.webclient.github.GithubBranchesClient;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class GithubBranchesService {
 
     private final GithubBranchesClient githubBranchesClient;
 
-    List<BranchInformationDto> getAllOwnerBranchesForRepository(RepositoryDto repositoryDto) {
-        List<BranchDto> branchesForRepositoryFromGithub = githubBranchesClient.getBranchesForRepository(repositoryDto.getOwnerDto().getLogin(), repositoryDto.getName());
-        return prepareBranchInformationDto(branchesForRepositoryFromGithub);
+    Mono<List<BranchInformationDto>> getAllOwnerBranchesForRepository(RepositoryDto repositoryDto) {
+        return githubBranchesClient.getBranchesForRepository(repositoryDto.getOwnerDto().getLogin(), repositoryDto.getName())
+                .map(this::prepareBranchInformationDto);
     }
 
     private List<BranchInformationDto> prepareBranchInformationDto(List<BranchDto> branchesForRepositoryFromGithub) {
